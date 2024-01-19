@@ -7,21 +7,6 @@ from model_state import Base, State
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
-# function to create session and print results
-def fetch_all(session):
-    """Prints all State objects from the database
-    """
-    # build query and execute
-    query = session.query(State)
-    query = query.order_by(State.id)
-    results = query.all()
-
-    # print results
-    for result in results:
-        print("{}: {}".format(result.id, result.name))
-
-
 if __name__ == "__main__":
     # initialize engine
     engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'
@@ -29,12 +14,17 @@ if __name__ == "__main__":
                            pool_pre_ping=True)
     Base.metadata.create_all(engine)
 
-    # initialize session
+    # create session
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # fetch all
-    fetch_all(session)
+    # build query and execute
+    query = session.query(State)
+    query = query.order_by(State.id)
+    result = query.first()
+
+    # print results
+    print("{}: {}".format(result.id, result.name))
 
     # close session
     session.close()

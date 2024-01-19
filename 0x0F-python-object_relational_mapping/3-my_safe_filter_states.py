@@ -1,14 +1,13 @@
 #!/usr/bin/python3
-"""Lists states from the database hbtn_0e_0_usa based on user input"""
+"""Module to filter states by user input"""
 
 import sys
 import MySQLdb
 
 
-# function to list states
-def list_states(db, username, password, db_name, filter):
-    """Lists states from the database hbtn_0e_0_usa based on user input"""
-
+# function to filter by user input
+def filter_states(db):
+    """Filter states by user input"""
     # create cursor
     cur = db.cursor()
 
@@ -16,22 +15,23 @@ def list_states(db, username, password, db_name, filter):
     query = """
     SELECT id, name
     FROM states
-    WHERE name = '{}'
+    WHERE name = %s
     ORDER BY id ASC;
-    """.format(filter)
+    """
 
     # execute and fetch query
-    cur.execute(query)
+    cur.execute(query, (filter,))
     results = cur.fetchall()
 
+    # print results
     for result in results:
         print(result)
 
-    # close cursor
+    # close the cursor
     cur.close()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # get command line arguments
     username, password, db_name, filter = sys.argv[1:]
 
@@ -42,8 +42,5 @@ if __name__ == "__main__":
             passwd=password,
             db=db_name)
 
-    # list states
-    list_states(db, username, password, db_name, filter)
-
-    # close db
+    filter_states(db)
     db.close()
