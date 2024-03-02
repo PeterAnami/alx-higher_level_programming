@@ -1,45 +1,59 @@
 #!/usr/bin/python3
-"""square class"""
+"""module contains class Square"""
 from models.rectangle import Rectangle
 
 
 class Square(Rectangle):
-    """inherits from"""
+    """Square class, inherits from the Rectangle class
+    """
+
     def __init__(self, size, x=0, y=0, id=None):
-        """super function"""
         super().__init__(size, size, x, y, id)
+
+    def __str__(self):
+        return "[{}] ({}) {}/{} - {}".format(self.__class__.__name__,
+                                             self.id,
+                                             self.x,
+                                             self.y,
+                                             self.size)
+
+    def to_dictionary(self):
+        """returns the dictionary representation of a Square instance
+        """
+        return {
+            "id": self.id,
+            "x": self.x,
+            "size": self.size,
+            "y": self.y,
+        }
+
+    def update(self, *args, **kwargs):
+        """Updates the values of the instance
+        """
+        attributes = ["id", "size", "x", "y"]
+
+        if args:
+
+            for i, arg in enumerate(args):
+                setattr(self, attributes[i], arg)
+        else:
+            for key, value in kwargs.items():
+                if key in attributes:
+                    setattr(self, key, value)
 
     @property
     def size(self):
-        """gets size"""
+        """Getter for the private property size
+        Setter takes in the parameter size
+        """
         return self.width
 
     @size.setter
     def size(self, value):
-        """sets size"""
-        self.width = value
-        self.height = value
+        if type(value) != int:
+            raise TypeError("width must be an integer")
 
-    def update(self, *args, **kwargs):
-        """updates square"""
-        if args:
-            i = 0
-            keys = ['id', 'size', 'x', 'y']
-            for arg in args:
-                setattr(self, keys[i], arg)
-                i += 1
-        elif kwargs:
-            for key, value in kwargs.items():
-                setattr(self, key, value)
+        if value < 1:
+            raise ValueError("width must be > 0")
 
-    def to_dictionary(self):
-        """dictionary"""
-        dic = {'id': self.id, 'size': self.size,
-               'x': self.x, 'y': self.y}
-        return dic
-
-    def __str__(self):
-        """gets rectangle"""
-        return "[{}] ({}) {}/{} - {}".format(
-            type(self).__name__, self.id, self.x, self.y,
-            self.size)
+        self.width = self.height = value
